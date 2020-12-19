@@ -1,0 +1,99 @@
+package geometry
+
+import (
+	"errors"
+	"log"
+	"math"
+)
+
+type Matrix struct {
+	m      int
+	n      int
+	Matrix [][]int
+}
+
+type Vector struct {
+	n   int
+	Vec []int
+}
+
+func NewMatrix(m int, n int) *Matrix {
+	mat := make([][]int, m, n)
+	return &Matrix{m, n, mat}
+}
+func NewVec(n int) Vector {
+	return Vector{n, make([]int, n)}
+}
+
+func (vec *Matrix) FillWith(n int) {
+	for i := vec.m; i > 0; i-- {
+		for j := vec.n; j > 0; j-- {
+			vec.Matrix[i][j] = 0
+		}
+	}
+}
+
+func DotP(vec, y Vector) (int, error) {
+	if !sameSize(vec, y) {
+		return int(math.NaN()), errors.New("Vectors of different dimensions")
+	}
+	var dot int
+	for i := 0; i < len(vec.Vec); i++ {
+		dot += vec.Vec[i] * y.Vec[i]
+	}
+	return dot, nil
+}
+
+func (vec Vector) MulScalar(a int) Vector {
+
+	newVec := make([]int, vec.n)
+
+	for i := 0; i < vec.n; i++ {
+		newVec[i] = vec.Vec[i] * a
+	}
+
+	return Vector{vec.n, newVec}
+}
+
+func AddV(vec1, vec2 Vector) Vector {
+	newVec := make([]int, vec1.n)
+
+	for i := 0; i < vec1.n; i++ {
+		newVec[i] = vec1.Vec[i] + vec2.Vec[i]
+	}
+	return Vector{vec1.n, newVec}
+
+}
+
+func SubV(vec1, vec2 Vector) Vector {
+	newVec := make([]int, vec1.n)
+
+	for i := 0; i < vec1.n; i++ {
+		newVec[i] = vec1.Vec[i] + vec2.Vec[i]
+	}
+	return Vector{vec1.n, newVec}
+
+}
+
+func (v Vector) Lenght() int {
+	length, err := DotP(v, v)
+	if err != nil || float64(length) == math.NaN() {
+		log.Print("here")
+		return int(math.NaN())
+	}
+	return int(math.Sqrt(float64(length)))
+
+}
+func (v Vector) DivScalar(n int) Vector {
+	if n != 0 {
+		return v.MulScalar(1 / n)
+	}
+	return v
+}
+
+func sameSize(vec1, vec2 Vector) bool {
+	if vec1.n != vec2.n {
+		return false
+	}
+	return true
+}
